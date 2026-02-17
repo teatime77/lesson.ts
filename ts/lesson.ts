@@ -1,13 +1,5 @@
-namespace lesson_ts {
-const fetchText = i18n_ts.fetchText;
-const assert = i18n_ts.assert;
-const msg = i18n_ts.msg;
-const $div = i18n_ts.$div;
-const last = i18n_ts.last;
-const parseMath = parser_ts.parseMath;
-const renderKatexSub = parser_ts.renderKatexSub;
-type  Term = parser_ts.Term;
-const MyError = i18n_ts.MyError;
+import { $div, fetchText, last, msg, MyError, parseURL } from "@i18n";
+import { Term, SyntaxError, parseMath, renderKatexSub } from "@parser";
 
 function renderTex(ele : HTMLElement, text : string){
     if(text.startsWith("$") || text.includes(" $")){
@@ -97,11 +89,11 @@ class MathContent extends ContentBlock {
 
     readMathLine(line : string){
         try{
-            const root = parser_ts.parseMath(line);
+            const root = parseMath(line);
             this.addTerm(root);
         }
         catch(e){
-            if(e instanceof parser_ts.SyntaxError){
+            if(e instanceof SyntaxError){
                 msg(`syntax err:[${line}]`);
             }
             else{
@@ -284,7 +276,7 @@ class LessonReader {
   
 export async function bodyOnLoad(){
     console.log("hello world");
-    const [ origin, pathname, params] = i18n_ts.parseURL();
+    const [ origin, pathname, params, ] = parseURL();
     msg(`[${origin}][${pathname}]`);
     const text = await(fetchText(`lib/lesson/lesson.txt?ver=${Math.random()}`));
 
@@ -294,5 +286,4 @@ export async function bodyOnLoad(){
     const div = $div("lessons-div");
     div.innerHTML = "";
     lesson.contents[0].makeHTML(div);
-}
 }
